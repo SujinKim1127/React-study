@@ -1,12 +1,33 @@
 import React, { useState } from "react";
+import { Display } from "./Components/Display";
+import { Buttons } from "./Components/Buttons";
 import './style.css'
+
+function calculate(n1, operator, n2) {
+    let rst = 0;
+    if(operator === "+"){
+        rst = Number(n1) + Number(n2);
+    }
+    else if(operator === "-"){
+        rst = Number(n1) - Number(n2);
+    }
+    else if(operator === "*"){
+        rst = Number(n1) * Number(n2);
+    }
+    else if(operator === "/"){
+        rst = Number(n1) / Number(n2);
+    }
+    return rst;
+  }
+  
+  let point = 0;      // 소수점 연속으로 눌림 방지
+  let cnt = 0;        // 연속으로 enter 눌렀을때 계산
 
 export const Calculator = () => {
     const [first, setFirst] = useState("");
     const [second, setSecond] = useState("");
     const [result, setResult] = useState("");
     const [operator, setOper] = useState("");
-    const [process, setProcess] = useState("");
 
 
 
@@ -25,92 +46,49 @@ export const Calculator = () => {
             console.log("두번째 입력")
             setSecond((prev) => prev + e.target.value);
         }
-        setProcess((prev) => prev + e.target.value);
       };
       
     const getOper = (e) => {
-    console.log("res", result)
-    setFirst(result);
-    console.log("op F", first)
-    setOper(e.target.value);
-    console.log("op=", operator);
-    setResult("");          
-    setProcess((prev) => prev + " " + e.target.value + " ");
-
+        setFirst(result);
+        setOper(e.target.value);
+        setResult("");          
+        point = 0;
     }
     
     const getPoint = (e) => {
-    
-    }
+        if(point === 0) setResult('.');
+        if(first === "") setResult('.');
+        point++;
+      }
     
     const getResult = () => {
+        cnt++;
         let num;
         console.log("F", first)
         console.log("s", second)
         console.log("o", operator)
-        if(operator === "+"){
-            num = (Number(first) + Number(second))
-            console.log(result);
-        }
-        else if(operator === "-"){
-            num = (Number(first) - Number(second))
-        }
-        else if(operator === "*"){
-            num = (Number(first) * Number(second))
-        }
-        else if(operator === "/"){
-            num = (Number(first) / Number(second))
-        }
-        setResult(num)
+        // 첫번째 계산
+        if(cnt === 1) num = calculate(first, operator, second);
+        // enter 여러번 누르면
+        if(cnt > 1) num = calculate(result, operator, second);
 
-        setProcess((prev) => prev + " =");
+        setResult(num)
     }
 
     const setZero = (e) => {
-    setFirst("");
-    setSecond("");
-    setOper("");
-    setResult("");
-    setProcess("")
+        setFirst("");
+        setSecond("");
+        setOper("");
+        setResult("");
+        cnt = 0;
     }
 
 
     return (
     <div class="container">
         <div class="calculator">
-            <div value={result} className="calculator__display--for-advanced">
-                <div className="calculator__process">{process}</div>
-                {result}
-            </div>
-            <div className="calculator__buttons">
-                <div className="clear__and__enter">
-                    <button onClick={setZero} className="clear">AC</button>
-                    <button className="calculate" onClick={getResult}>Enter</button>
-                </div>
-                <div className="button__row">
-                    <button value={9} onClick={getNum} className="number">9</button>
-                    <button value={8} onClick={getNum} className="number">8</button>
-                    <button value={7} onClick={getNum} className="number">7</button>
-                    <button value="+" onClick={getOper} className="operator">+</button>
-                </div>
-                <div className="button__row">
-                    <button value={4}  onClick={getNum} className="number">4</button>
-                    <button value={5}  onClick={getNum} className="number">5</button>
-                    <button value={6}  onClick={getNum} className="number">6</button>
-                    <button value="-"  onClick={getOper} className="operator">-</button>
-                </div>
-                <div className="button__row">
-                    <button value={1} onClick={getNum} className="number">1</button>
-                    <button value={2} onClick={getNum} className="number">2</button>
-                    <button value={3} onClick={getNum} className="number">3</button>
-                    <button value="*" onClick={getOper} className="operator">*</button>
-                </div>
-                <div className="button__row">
-                    <button value="." onClick={getPoint} className="decimal">.</button>
-                    <button value={0} onClick={getNum} className="number double">0</button>
-                    <button value="/" onClick={getOper} className="operator">/</button>
-                </div>
-            </div>
+            <Display result={result}/>
+            <Buttons setZero={setZero} getResult={getResult} getNum={getNum} getOper={getOper} getPoint={getPoint} />
         </div>
     </div>
     );

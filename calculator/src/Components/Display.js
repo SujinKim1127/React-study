@@ -1,7 +1,9 @@
-export const Display = () => {
+export const Display = ({result}) => {
     return (
-        <div className="calculator__display--for-advanced">0</div>
-        );         
+        <div value={result} className="calculator__display--for-advanced">
+            {result}
+        </div>
+    );         
   
 
 }
