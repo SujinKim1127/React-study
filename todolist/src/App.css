@@ -1,0 +1,17 @@
+.App {
+  text-align: center;
+}
+
+.todo{
+  font-weight: bold;
+}
+
+.todolist {
+
+  margin-left: 200px;
+  text-align: left;
+}
+
+h3{
+  font-weight: 470;
+}
