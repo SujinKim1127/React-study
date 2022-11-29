@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled, { useTheme } from "styled-components"
 import { TodoList } from './Components/TodoList';
 
@@ -8,6 +8,28 @@ function App() {
   const [todos, setTodos] = useState(todo);
   const [input, setInput] = useState("");
   const [state, setState] = useState(false);
+  const [error, setError] = useState(null);
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      fetch("http://localhost:3001/")
+        .then((res) => {
+          if (!res.ok) {
+            throw Error("could not fetch the data for that resource");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          console.log(data)
+          setTodos(data)
+        })
+        .catch((err) => {
+          setError(err.message);
+        });
+    }, 1000);
+  }, []);
+
 
   function insertTodo(e) {
     const text = document.getElementById('todo').value

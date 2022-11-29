@@ -1,0 +1,14 @@
+{
+    "todos": [
+      {
+        "id": 1,
+        "todo": "박해커의 삶",
+        "check": true
+      },
+      {
+        "id": 2,
+        "todo": "박해커의 삶",
+        "check": false
+      } 
+    ]
+  }
