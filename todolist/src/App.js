@@ -4,6 +4,8 @@ import styled, { useTheme } from "styled-components"
 import { TodoList } from './Components/TodoList';
 
 function App() {
+  const baseUrl = "http://localhost:3001/"
+
   const todo = ['React 강의듣기', '청소하기']
   const [todos, setTodos] = useState(todo);
   const [input, setInput] = useState("");
@@ -13,7 +15,7 @@ function App() {
 
   useEffect(() => {
     setTimeout(() => {
-      fetch("http://localhost:3001/")
+      fetch(baseUrl)
         .then((res) => {
           if (!res.ok) {
             throw Error("could not fetch the data for that resource");
@@ -21,7 +23,7 @@ function App() {
           return res.json();
         })
         .then((data) => {
-          console.log(data)
+          console.log("data", data)
           setTodos(data)
         })
         .catch((err) => {
@@ -32,7 +34,19 @@ function App() {
 
 
   function insertTodo(e) {
+    e.preventDefault();
     const text = document.getElementById('todo').value
+
+    fetch(baseUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(text)  
+    })
+    .then((data) => {
+      
+    })
+
+
     console.log(text)
     setTodos([...todos, input])
     console.log(todo)
