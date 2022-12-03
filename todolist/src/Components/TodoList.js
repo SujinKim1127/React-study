@@ -1,11 +1,12 @@
-import React from 'react';
+import React from "react";
 
-export const TodoList = ({todo, idx, deleteTodo}) => {
-    return (
-        <h3>
-            <input type="checkbox" onClick={() => deleteTodo(idx)}></input>
-            <label key={idx} onClick={() => deleteTodo(idx)}>&nbsp;&nbsp;&nbsp;{todo}</label>
-        </h3>
-    )
-    
-}
+export const TodoList = ({ todo, idx, deleteTodo }) => {
+  return (
+    <div>
+      <h3>
+        <input type="checkbox" onClick={() => deleteTodo(todo.id)}></input>
+        <label className="todo">&nbsp;{todo.todoName}</label>
+      </h3>
+    </div>
+  );
+};
