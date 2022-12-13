@@ -15,9 +15,9 @@ function App() {
     getTodos();
   }, []);
 
-  async function getTodos() {
-    await axios
-      .get(baseUrl + "/todos") // axios를 호출해서 응답을 받을때까지 기다림
+  function getTodos() {
+    axios
+      .get(baseUrl + "/todos") 
       .then((res) => {
         console.log(res.data);
         setTodos(res.data);
@@ -25,37 +25,28 @@ function App() {
       .catch((err) => console.error(err));
   }
 
-  function insertTodo(e) {
+  const insertTodo = (e) => {
     e.preventDefault();
 
-    const insertTodo = async () => {
-      await axios
-        .post(baseUrl + "/todos", {
-          todoName: input,
-        })
-        .then((res) => {
-          console.log(res.data);
-          setInput("");
-          getTodos();
-        })
-        .catch((err) => console.error(err));
-    };
-
-    insertTodo();
+    axios
+      .post(baseUrl + "/todos", {
+        todoName : input,
+      })
+      .then((res) => {
+        console.log(res.data);
+        setInput("");
+        getTodos();
+      })
   }
 
-  function deleteTodo(id) {
-    const deleteTodo = async () => {
-      await axios
-        .delete(baseUrl + "/todos/" + id, {})
-        .then((res) => {
-          setTodos(todos.filter((todo) => todo.id !== id));
-        })
-        .catch((err) => console.error(err));
-    };
-
-    deleteTodo();
-  }
+  const deleteTodo = (id) => {
+    axios
+      .delete(baseUrl + "/todos/" + id, {})
+      .then((res) => {
+        setTodos(todos.filter((todo) => todo.id !== id));
+      })
+      .catch((err) => console.error(err));
+}
 
   function changeText(e) {
     setInput(e.target.value);
