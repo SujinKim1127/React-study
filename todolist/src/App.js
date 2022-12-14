@@ -46,11 +46,13 @@ function App() {
         setTodos(todos.filter((todo) => todo.id !== id));
       })
       .catch((err) => console.error(err));
-}
+  }
+
 
   function changeText(e) {
     setInput(e.target.value);
   }
+
 
   return (
     <div className="App">
@@ -62,7 +64,7 @@ function App() {
       <button onClick={insertTodo}>Create</button>
       <div className="todolist">
         {todos.map((todo) => {
-          return <TodoList todo={todo} deleteTodo={deleteTodo}/>
+          return <TodoList todo={todo} deleteTodo={deleteTodo} getTodos={getTodos}/>
         })}
       </div>
     </div>

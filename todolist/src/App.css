@@ -1,17 +1,50 @@
 .App {
+  width: 300px;
+  margin: auto;
   text-align: center;
 }
 
 .todo{
+  cursor: pointer;
   font-weight: bold;
 }
 
 .todolist {
-
-  margin-left: 200px;
   text-align: left;
 }
 
 h3{
   font-weight: 470;
+}
+
+.inline {
+  color: #929292;
+  text-decoration: line-through;
+}
+
+.todolist {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.all {
+  display: flex;
+  width: 280px;
+  flex-direction: column;
+}
+
+
+.edit {
+  margin-left: auto;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+
+.edit__input {
+  margin-left: 20px;
+}
+
+.edit__btn {
+  margin: center;
 }
