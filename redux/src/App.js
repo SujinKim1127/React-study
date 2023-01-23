@@ -12,17 +12,28 @@ function reducer(currentState, action) {
     // state가 정의되지 않으면
     return {
       number: 1, // 기본값은 1이다.
+      word: "",
     };
   }
 
-  // 과거의 state를 복제하는 것
-  const newState = { ...currentState };
-
-  if(action.type === 'PLUS'){
+  if (action.type === "PLUS") {
+    // 과거의 state를 복제하는 것
+    const newState = { ...currentState };
+    console.log("action", action);
     newState.number++;
+    console.log("plus newState", newState);
+    return newState;
+  }
+  if (action.type === "SAVE") {
+    console.log("action", action);
+    const newState = { ...currentState };
+    console.log(currentState);
+    newState.word = document.getElementById("text").value;
+    console.log("save newState", newState);
+
+    return newState;
   }
   // return 값은 새로운 state 값
-  return newState;
 }
 
 // 변경하면 안되기 때문에 const로 선언
@@ -63,18 +74,20 @@ function Left2(props) {
 
 function Left3(props) {
   function f(state) {
-      // state의 어떤값을 사용할것인지 작성
+    // state의 어떤값을 사용할것인지 작성
     return state.number;
   }
 
   // const number = useSelector(f);
-  const number = useSelector((state)=>state.number);
+  const number = useSelector((state) => state.number);
+  const word = useSelector((state) => state.word);
   // useSelector는 함수를 입력받는다.
   // 화살표 함수도 가능
 
   return (
     <div>
       <h1>Left3 : {number}</h1>
+      <h2>text: {word}</h2>
     </div>
   );
 }
@@ -103,10 +116,21 @@ function Right3(props) {
   return (
     <div>
       <h1>Right3</h1>
-      <input type="button" value="+"
-      onClick={() => {
-        dispatch({type: "PLUS"})    // plus action 전달 -> reducer 호출됨
-      }}  
+      <input
+        type="button"
+        value="+"
+        onClick={() => {
+          dispatch({ type: "PLUS" }); // plus action 전달 -> reducer 호출됨
+        }}
+      ></input>
+      <input
+        type="text"
+        id="text"
+        onKeyUp={(e) => {
+          if (e.key === "Enter") {
+            dispatch({ type: "SAVE" });
+          }
+        }}
       ></input>
     </div>
   );
