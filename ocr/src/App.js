@@ -1,67 +1,70 @@
-import React from "react";
-import Tesseract from "tesseract.js";
+import React, { useState } from "react";
+
+const GoogleVisionApiKey = process.env.REACT_APP_API_KEY;
+console.log("googlevisio", GoogleVisionApiKey);
 
 const App = () => {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [image, setImage] = React.useState("");
-  const [text, setText] = React.useState("");
-  const [progress, setProgress] = React.useState(0);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [result, setResult] = useState(null);
 
-  const handleSubmit = () => {
-    setIsLoading(true);
-    Tesseract.recognize(image, "kor+eng", {
-      logger: (m) => {
-        console.log(m);
-        if (m.status === "recognizing text") {
-          setProgress(parseInt(m.progress * 100));
-        }
-      },
-    })
-      .catch((err) => {
-        console.error(err);
-      })
-      .then((result) => {
-        console.log(result.data);
-        setText(result.data.text);
-        setIsLoading(false);
+  const analyzeImage = async () => {
+    try {
+      const body = JSON.stringify({
+        requests: [
+          {
+            features: [{ type: "TEXT_DETECTION" }],
+            image: {
+              content: imageUrl.split(",")[1],
+            },
+          },
+        ],
       });
+      const response = await fetch(
+        `https://vision.googleapis.com/v1/images:annotate?key=${GoogleVisionApiKey}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: body,
+        }
+      );
+      const responseJson = await response.json();
+      setResult(responseJson.responses[0].fullTextAnnotation.text);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  <div></div>;
+
+  const handleChooseFile = async (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setImageUrl(reader.result);
+    };
+    reader.onerror = (error) => {
+      console.log(error);
+    };
+  };
+
   return (
-    <div style={{ height: "100vh" }}>
-      <div>
-        <div>
-          {!isLoading && <h1>Image To Text</h1>}
-          {isLoading && (
-            <>
-              <progress value={progress} max="100">
-                {progress}%{" "}
-              </progress>{" "}
-              <p>Converting:- {progress} %</p>
-            </>
-          )}
-          {!isLoading && !text && (
-            <>
-              <input
-                type="file"
-                onChange={(e) =>
-                  setImage(URL.createObjectURL(e.target.files[0]))
-                }
-              />
-              <input type="button" onClick={handleSubmit} value="Convert" />
-            </>
-          )}
-          {!isLoading && text && (
-            <>
-              <textarea
-                rows="30"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-              ></textarea>
-            </>
-          )}
-        </div>
-      </div>
+    <div>
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt="Selected Image"
+          style={{ width: "200px", height: "200px" }}
+        />
+      ) : (
+        <input type="file" onChange={handleChooseFile} />
+      )}
+      {result ? (
+        <p>{result}</p>
+      ) : (
+        <button onClick={analyzeImage}>Analyze</button>
+      )}
     </div>
   );
 };
