@@ -1,71 +1,48 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import axios from "axios";
+import openai from "openai";
 
 const GoogleVisionApiKey = process.env.REACT_APP_API_KEY;
-console.log("googlevisio", GoogleVisionApiKey);
 
 const App = () => {
-  const [imageUrl, setImageUrl] = useState(null);
-  const [result, setResult] = useState(null);
+  const [response, setResponse] = useState("");
+  const [prompt, setPrompt] = useState("");
 
-  const analyzeImage = async () => {
-    try {
-      const body = JSON.stringify({
-        requests: [
-          {
-            features: [{ type: "TEXT_DETECTION" }],
-            image: {
-              content: imageUrl.split(",")[1],
-            },
-          },
-        ],
-      });
-      const response = await fetch(
-        `https://vision.googleapis.com/v1/images:annotate?key=${GoogleVisionApiKey}`,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: body,
-        }
-      );
-      const responseJson = await response.json();
-      setResult(responseJson.responses[0].fullTextAnnotation.text);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const apiKey = process.env.REACT_APP_CHATGPT_API;
 
-  const handleChooseFile = async (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      setImageUrl(reader.result);
-    };
-    reader.onerror = (error) => {
-      console.log(error);
-    };
+  useEffect(() => {
+    openai.Completion.create({
+      engine: "text-davinci-002",
+      prompt: prompt,
+    }).then((response) => {
+      console.log(response);
+      setResponse(response.choices[0].text);
+    });
+  }, [prompt]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    openai.Completion.create({
+      engine: "text-davinci-002",
+      prompt: prompt,
+    }).then((response) => {
+      console.log(response);
+      setResponse(response.choices[0].text);
+    });
   };
 
   return (
-    <div>
-      {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt="Selected Image"
-          style={{ width: "200px", height: "200px" }}
+    <>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
         />
-      ) : (
-        <input type="file" onChange={handleChooseFile} />
-      )}
-      {result ? (
-        <p>{result}</p>
-      ) : (
-        <button onClick={analyzeImage}>Analyze</button>
-      )}
-    </div>
+        <button type="submit">Submit</button>
+      </form>
+      <div>{response}</div>
+    </>
   );
 };
 

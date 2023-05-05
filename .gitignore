@@ -1,2 +1,4 @@
 node_modules
 ocr/.env
+chat/.env
+chatgpt/.env
