@@ -1,9 +1,8 @@
 import { Inter } from "next/font/google";
 import { atom, useAtomValue, useSetAtom } from "jotai";
+import { priceAtom } from "./price";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const priceAtom = atom(10000);
 
 export default function Home() {
   const setPrice = useSetAtom(priceAtom);
